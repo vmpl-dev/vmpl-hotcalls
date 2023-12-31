@@ -7,6 +7,7 @@
 
 HotCall hotcall = HOTCALL_INITIALIZER;
 static HotCallTable callTable;
+static bool initialized = false;
 
 void my_syscall(void* syscall_args)
 {
@@ -20,7 +21,7 @@ void hotcalls_thread(void* args)
     HotCall_waitForCall((HotCall*)args, &callTable);
 }
 
-int hotcalls_setup(int max_entries)
+void hotcalls_setup(int max_entries)
 {
     int rc;
     callTable.numEntries = max_entries;
@@ -29,9 +30,13 @@ int hotcalls_setup(int max_entries)
         callTable.callbacks[i] = NULL;
     hotcalls_register(0, my_syscall);
     rc = pthread_create(&(hotcall.responderThread), NULL, (void *(*)(void *))hotcalls_thread, (void *)&hotcall);
-    if(rc != 0)
-        return EXIT_FAILURE; //fail to setup
-    return EXIT_SUCCESS; //success
+    if(rc == 0)  
+        initialized = true;
+}
+
+bool hotcalls_initialized()
+{
+    return initialized;
 }
 
 int hotcalls_register(int sysnr, SyscallFunction func)

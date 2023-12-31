@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -15,6 +16,8 @@ typedef struct
 // 函数指针类型，用于表示系统调用函数
 typedef void (*SyscallFunction)(void* args);
 
+#define HOTCALLS_SYSCALL 0
+
 /**
  * 创建hotcalls线程，随时准备接收hotcalls请求:
  * 执行syscall转发循环，从共享内存获取 struct hotcall args_t 参数，并将返回值通过共享内存返回给调用者
@@ -23,7 +26,14 @@ typedef void (*SyscallFunction)(void* args);
  * @param max_entries 最大系统调用号
  * @return int 初始化是否成功 0表示成功，1表示失败
  */
-int hotcalls_setup(int max_entries);
+void hotcalls_setup(int max_entries);
+
+/**
+ * 判断hotcalls线程是否初始化
+ * 
+ * @return bool 是否初始化
+*/
+bool hotcalls_initialized();
 
 /**
  * 注册系统调用函数

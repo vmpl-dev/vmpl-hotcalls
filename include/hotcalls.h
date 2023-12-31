@@ -20,8 +20,10 @@ typedef void (*SyscallFunction)(void* args);
  * 执行syscall转发循环，从共享内存获取 struct hotcall args_t 参数，并将返回值通过共享内存返回给调用者
  * 在VMPL0初始化的时候会调用该函数，以创建一个hotcalls线程;
  * 线程会等待hotcalls请求，直到调用hotcalls teardown()结束线程
-*/
-void hotcalls_setup();
+ * @param max_entries 最大系统调用号
+ * @return int 初始化是否成功 0表示成功，1表示失败
+ */
+int hotcalls_setup(int max_entries);
 
 /**
  * 注册系统调用函数

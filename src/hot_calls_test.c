@@ -18,7 +18,7 @@ int hotcalls_write(int fd, const void *buf, size_t count)
 
 int main(int argc, char *argv[]) {
     printf("enter main...\n");
-    hotcalls_setup();
+    hotcalls_setup(1);
     printf("setup finish \n");
     hotcalls_write(1, "hello world\n", 12);
     printf("call finish \n");

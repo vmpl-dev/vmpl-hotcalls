@@ -20,14 +20,18 @@ void hotcalls_thread(void* args)
     HotCall_waitForCall((HotCall*)args, &callTable);
 }
 
-void hotcalls_setup(int max_entries)
+int hotcalls_setup(int max_entries)
 {
+    int rc;
     callTable.numEntries = max_entries;
     callTable.callbacks = (SyscallFunction*)malloc(sizeof(SyscallFunction) * max_entries);
     for(int i = 0; i < max_entries; i++)
         callTable.callbacks[i] = NULL;
     hotcalls_register(0, my_syscall);
-    pthread_create(&(hotcall.responderThread), NULL, (void *(*)(void *))hotcalls_thread, (void *)&hotcall);
+    rc = pthread_create(&(hotcall.responderThread), NULL, (void *(*)(void *))hotcalls_thread, (void *)&hotcall);
+    if(rc != 0)
+        return EXIT_FAILURE; //fail to setup
+    return EXIT_SUCCESS; //success
 }
 
 int hotcalls_register(int sysnr, SyscallFunction func)

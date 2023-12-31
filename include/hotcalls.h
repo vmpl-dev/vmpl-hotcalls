@@ -1,3 +1,6 @@
+#ifndef __HOTCALLS_H__
+#define __HOTCALLS_H__
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -66,3 +69,4 @@ long hotcalls_call(hotcall_args_t *args);
  * @return long 系统调用返回值
  */
 long syscalls_call(hotcall_args_t *args);
+#endif

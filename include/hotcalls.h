@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include<pthread.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-#include"hot_calls.h"
+#include <stdint.h>
 
 typedef struct
 {
@@ -28,6 +22,15 @@ typedef void (*SyscallFunction)(void* args);
  * 线程会等待hotcalls请求，直到调用hotcalls teardown()结束线程
 */
 void hotcalls_setup();
+
+/**
+ * 注册系统调用函数
+ * 
+ * @param sysnr 系统调用号
+ * @param func 系统调用函数
+ * @return int 注册是否成功 1表示成功
+*/
+int hotcalls_register(int sysnr, SyscallFunction func);
 
 /**
  * 关闭hotcalls线程，释放hotcalls线程资源

@@ -30,7 +30,7 @@
 // #include <stdlib.h>
 #include <sgx_spinlock.h>
 #include <stdbool.h>
-// #include "utils.h"
+#include <stddef.h>
 
 
 #pragma GCC diagnostic ignored "-Wunused-function"

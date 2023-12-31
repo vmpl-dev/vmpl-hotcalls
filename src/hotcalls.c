@@ -33,10 +33,10 @@ void hotcalls_setup(int max_entries)
 int hotcalls_register(int sysnr, SyscallFunction func)
 {
     if(sysnr >= callTable.numEntries)
-        return -1; //fail to register
+        return EXIT_FAILURE; //fail to register
 
     callTable.callbacks[sysnr] = func;
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int hotcalls_teardown()
@@ -48,8 +48,15 @@ int hotcalls_teardown()
     return EXIT_SUCCESS; //success
 }
 
-int hotcalls_call(hotcall_args_t *args)
+long hotcalls_call(hotcall_args_t *args)
 {
     HotCall_requestCall(&hotcall, (uint16_t)0, args);
-    return (int)((hotcall_args_t *)hotcall.data)->rax;
+    return ((hotcall_args_t *)hotcall.data)->rax;
+}
+
+long syscalls_call(hotcall_args_t *args)
+{
+    args->rax = syscall(args->sysnr, args->rdi, args->rsi,
+                   args->rdx, args->r10, args->r8, args->r9);
+    return args->rax;
 }

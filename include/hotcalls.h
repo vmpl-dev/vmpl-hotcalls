@@ -43,7 +43,14 @@ int hotcalls_teardown();
  * @brief 调用hotcalls，将参数传递给hotcals线程，hotalls线程执行syscall，将返回值通过共享内存返回给调用者
  * @param sysnr 系统调用号
  * @param args 系统调用参数
- * @return int 系统调用返回值
+ * @return long 系统调用返回值
 */
-int hotcalls_call(hotcall_args_t *args);
+long hotcalls_call(hotcall_args_t *args);
 
+/**
+ * @brief 直接执行系统调用，不通过hotcalls线程，将返回值通过共享内存返回给调用者
+ * @param sysnr 系统调用号
+ * @param args 系统调用参数
+ * @return long 系统调用返回值
+ */
+long syscalls_call(hotcall_args_t *args);

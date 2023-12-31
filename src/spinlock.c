@@ -1,23 +1,5 @@
-// ----------------------------------------
-// HotCalls
-// Copyright 2017 The Regents of the University of Michigan
-// Ofir Weisse, Valeria Bertacco and Todd Austin
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-// ---------------------------------------------
-
 /*
- * Copyright (C) 2011-2016 Intel Corporation. All rights reserved.
+ * Copyright (C) 2011-2021 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +34,7 @@
 static inline void _mm_pause(void) __attribute__((always_inline));
 static inline int _InterlockedExchange(int volatile * dst, int val) __attribute__((always_inline));
 
-// inline uint32_t sgx_spin_lock(sgx_spinlock_t *lock) __attribute__((always_inline));
-inline uint32_t sgx_spin_unlock(sgx_spinlock_t *lock) __attribute__((always_inline));
-
-static inline void _mm_pause(void)
+static inline void _mm_pause(void)  /* definition requires -ffreestanding */
 {
     __asm __volatile(
         "pause"
@@ -79,22 +58,29 @@ static inline int _InterlockedExchange(int volatile * dst, int val)
    
 }
 
-inline uint32_t sgx_spin_lock(sgx_spinlock_t *lock)
+#define MIN_BACKOFF 2
+#define MAX_BACKOFF 1024
+uint32_t sgx_spin_lock(sgx_spinlock_t *lock)
 {
     while(_InterlockedExchange((volatile int *)lock, 1) != 0) {
-        while (*lock) {
-            /* tell cpu we are spinning */
-            _mm_pause();
-        } 
+        int b = MIN_BACKOFF;
+        do
+        {    /* tell cpu we are spinning */
+            for (int i=0; i < b; i++) {
+                _mm_pause();
+            }
+            b <<= 1;
+            if (b > MAX_BACKOFF) {
+                b = MAX_BACKOFF;
+            }
+        } while (*lock);
     }
-
     return (0);
 }
 
-inline uint32_t sgx_spin_unlock(sgx_spinlock_t *lock)
+uint32_t sgx_spin_unlock(sgx_spinlock_t *lock)
 {
     *lock = 0;
 
     return (0);
 }
-

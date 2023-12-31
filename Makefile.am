@@ -12,9 +12,12 @@ libhotcalls_la_SOURCES = src/hotcalls.c \
 libhotcalls_la_LDFLAGS = -version-info 1:0:0
 
 # Specify executables to be built
-bin_PROGRAMS = hot_calls_test
+bin_PROGRAMS = hot_calls_test vmpl_hot_calls_test
 hot_calls_test_SOURCES = src/hot_calls_test.c
 hot_calls_test_LDADD = libhotcalls.la
+
+vmpl_hot_calls_test_SOURCES = src/vmpl_hot_calls_test.c
+vmpl_hot_calls_test_LDADD = libhotcalls.la -lvmpl
 
 # Specify headers to be installed
 pkgincludedir = $(includedir)/hotcalls

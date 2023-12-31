@@ -89,7 +89,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-bin_PROGRAMS = hot_calls_test$(EXEEXT)
+bin_PROGRAMS = hot_calls_test$(EXEEXT) vmpl_hot_calls_test$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -152,6 +152,9 @@ libhotcalls_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 am_hot_calls_test_OBJECTS = src/hot_calls_test.$(OBJEXT)
 hot_calls_test_OBJECTS = $(am_hot_calls_test_OBJECTS)
 hot_calls_test_DEPENDENCIES = libhotcalls.la
+am_vmpl_hot_calls_test_OBJECTS = src/vmpl_hot_calls_test.$(OBJEXT)
+vmpl_hot_calls_test_OBJECTS = $(am_vmpl_hot_calls_test_OBJECTS)
+vmpl_hot_calls_test_DEPENDENCIES = libhotcalls.la
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -168,7 +171,8 @@ DEFAULT_INCLUDES = -I. -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = src/$(DEPDIR)/hot_calls_test.Po \
-	src/$(DEPDIR)/hotcalls.Plo src/$(DEPDIR)/spinlock.Plo
+	src/$(DEPDIR)/hotcalls.Plo src/$(DEPDIR)/spinlock.Plo \
+	src/$(DEPDIR)/vmpl_hot_calls_test.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -188,8 +192,10 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libhotcalls_la_SOURCES) $(hot_calls_test_SOURCES)
-DIST_SOURCES = $(libhotcalls_la_SOURCES) $(hot_calls_test_SOURCES)
+SOURCES = $(libhotcalls_la_SOURCES) $(hot_calls_test_SOURCES) \
+	$(vmpl_hot_calls_test_SOURCES)
+DIST_SOURCES = $(libhotcalls_la_SOURCES) $(hot_calls_test_SOURCES) \
+	$(vmpl_hot_calls_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -378,6 +384,8 @@ libhotcalls_la_SOURCES = src/hotcalls.c \
 libhotcalls_la_LDFLAGS = -version-info 1:0:0
 hot_calls_test_SOURCES = src/hot_calls_test.c
 hot_calls_test_LDADD = libhotcalls.la
+vmpl_hot_calls_test_SOURCES = src/vmpl_hot_calls_test.c
+vmpl_hot_calls_test_LDADD = libhotcalls.la -lvmpl
 pkginclude_HEADERS = include/hotcalls.h
 all: all-am
 
@@ -532,6 +540,12 @@ src/hot_calls_test.$(OBJEXT): src/$(am__dirstamp) \
 hot_calls_test$(EXEEXT): $(hot_calls_test_OBJECTS) $(hot_calls_test_DEPENDENCIES) $(EXTRA_hot_calls_test_DEPENDENCIES) 
 	@rm -f hot_calls_test$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(hot_calls_test_OBJECTS) $(hot_calls_test_LDADD) $(LIBS)
+src/vmpl_hot_calls_test.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+
+vmpl_hot_calls_test$(EXEEXT): $(vmpl_hot_calls_test_OBJECTS) $(vmpl_hot_calls_test_DEPENDENCIES) $(EXTRA_vmpl_hot_calls_test_DEPENDENCIES) 
+	@rm -f vmpl_hot_calls_test$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(vmpl_hot_calls_test_OBJECTS) $(vmpl_hot_calls_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -544,6 +558,7 @@ distclean-compile:
 include src/$(DEPDIR)/hot_calls_test.Po # am--include-marker
 include src/$(DEPDIR)/hotcalls.Plo # am--include-marker
 include src/$(DEPDIR)/spinlock.Plo # am--include-marker
+include src/$(DEPDIR)/vmpl_hot_calls_test.Po # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -887,6 +902,7 @@ distclean: distclean-am
 		-rm -f src/$(DEPDIR)/hot_calls_test.Po
 	-rm -f src/$(DEPDIR)/hotcalls.Plo
 	-rm -f src/$(DEPDIR)/spinlock.Plo
+	-rm -f src/$(DEPDIR)/vmpl_hot_calls_test.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -937,6 +953,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f src/$(DEPDIR)/hot_calls_test.Po
 	-rm -f src/$(DEPDIR)/hotcalls.Plo
 	-rm -f src/$(DEPDIR)/spinlock.Plo
+	-rm -f src/$(DEPDIR)/vmpl_hot_calls_test.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

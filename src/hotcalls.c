@@ -50,7 +50,6 @@ int hotcalls_teardown()
 
 int hotcalls_call(hotcall_args_t *args)
 {
-    printf("enter hotcalls_call\n");
     HotCall_requestCall(&hotcall, (uint16_t)0, args);
     return (int)((hotcall_args_t *)hotcall.data)->rax;
 }

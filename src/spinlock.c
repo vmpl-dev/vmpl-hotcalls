@@ -47,7 +47,7 @@
  *
  */
 
-#include <sgx_spinlock.h>
+#include "../include/sgx_spinlock.h"
 
 static inline void _mm_pause(void) __attribute__((always_inline));
 static inline int _InterlockedExchange(int volatile * dst, int val) __attribute__((always_inline));

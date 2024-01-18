@@ -18,6 +18,7 @@ void my_syscall(void* syscall_args)
 
 void hotcalls_thread(void* args)
 {
+    initialized = true;
     HotCall_waitForCall((HotCall*)args, &callTable);
 }
 
@@ -30,8 +31,6 @@ void hotcalls_setup(int max_entries)
         callTable.callbacks[i] = NULL;
     hotcalls_register(0, my_syscall);
     rc = pthread_create(&(hotcall.responderThread), NULL, (void *(*)(void *))hotcalls_thread, (void *)&hotcall);
-    if(rc == 0)  
-        initialized = true;
 }
 
 bool hotcalls_initialized()
